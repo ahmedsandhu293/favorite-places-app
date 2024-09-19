@@ -5,12 +5,24 @@ import { Colors } from "../../constants/colors";
 
 import ImagePicker from "./ImagePicker";
 import LocationPicker from "./LocationPicker";
+import Button from "../UI/Button";
 
 const PlaceForm = () => {
   const [enteredTitle, setEnteredTitle] = useState("");
+  const [pickedLocation, setPickedLocation] = useState()
+  const [selectedImage, setSelectedImage] =  useState()
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
   };
+  const takeImageHandler = (imageUri)=>{
+    setSelectedImage(imageUri)
+  }
+  const pickLocationHandler = (location)=>{
+    setPickedLocation(location)
+  }
+  const savePlaceHandler = ()=>{
+    console.log('hello placeForm file',pickedLocation, selectedImage)
+  }
   return (
     <ScrollView style={styles.form}>
       <View>
@@ -21,8 +33,9 @@ const PlaceForm = () => {
           style={styles.input}
         />
       </View>
-      <ImagePicker />
-      <LocationPicker/>
+      <ImagePicker onTakeImage={takeImageHandler} />
+      <LocationPicker onPickLocation={pickLocationHandler}/>
+      <Button onPress={savePlaceHandler}>Add Place</Button>
     </ScrollView>
   );
 };

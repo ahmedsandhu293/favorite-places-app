@@ -1,17 +1,37 @@
 import { Alert, StyleSheet, View } from "react-native";
-import OutlinedButton from "../UI/OutlinedButton";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  getCurrentPositionAsync,
+  PermissionStatus,
+  useForegroundPermissions,
+} from "expo-location";
+import { useEffect, useState } from "react";
+
 import { Colors } from "../../constants/colors";
-import { getCurrentPositionAsync, PermissionStatus, useForegroundPermissions } from "expo-location";
-import { useState } from "react";
 
 import MapPreview from "../UI/MapPreview";
+import OutlinedButton from "../UI/OutlinedButton";
 
-const LocationPicker = () => {
+const LocationPicker = ({ onPickLocation }) => {
   const [pickedLocation, setPickedLocation] = useState(null);
-  const [locationPermissionInformation, requestPermission] = useForegroundPermissions();
+  const navigation = useNavigation();
+  const [locationPermissionInformation, requestPermission] =
+    useForegroundPermissions();
+
+  const route = useRoute();
+  const mapPickedLocation = route.params && {
+    lat: route.params.picketLat,
+    lng: route.params.picketLng,
+  };
+  useEffect(() => {
+    if (mapPickedLocation) {
+    }
+  }, []);
 
   const verifyPermissions = async () => {
-    if (locationPermissionInformation?.status === PermissionStatus.UNDETERMINED) {
+    if (
+      locationPermissionInformation?.status === PermissionStatus.UNDETERMINED
+    ) {
       const permissionResponse = await requestPermission();
       return permissionResponse.granted;
     }
@@ -35,10 +55,15 @@ const LocationPicker = () => {
       lat: location.coords.latitude,
       lng: location.coords.longitude,
     });
+    onPickLocation({
+      lat: location.coords.latitude,
+      lng: location.coords.longitude,
+    });
   };
 
   const pickOnMapHandler = () => {
     // Handle logic for allowing users to pick a location on the map.
+    navigation.navigate("Map");
   };
 
   return (
@@ -51,9 +76,9 @@ const LocationPicker = () => {
         <OutlinedButton onPress={getLocationHandler} icon="location">
           Locate User
         </OutlinedButton>
-        <OutlinedButton onPress={pickOnMapHandler} icon="map">
+        {/* <OutlinedButton onPress={pickOnMapHandler} icon="map">
           Pick on Map
-        </OutlinedButton>
+        </OutlinedButton> */}
       </View>
     </View>
   );
@@ -70,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.primary100,
     borderRadius: 4,
-      overflow:'hidden'
+    overflow: "hidden",
   },
   actions: {
     flexDirection: "row",
